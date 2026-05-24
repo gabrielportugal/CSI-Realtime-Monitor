@@ -41,8 +41,8 @@ Data: Maio 2026
 =========================================================
 */
 
-const char* ssid = "REDE WIFI";           // Nome da rede WiFi (SSID)
-const char* password = "senha da rede";   // Senha da rede WiFi
+const char* ssid = "";           // Nome da rede WiFi (SSID)
+const char* password = "";   // Senha da rede WiFi
 
 /*
 =========================================================

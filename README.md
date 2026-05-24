@@ -9,7 +9,7 @@ O sistema detecta pequenas mudanças no sinal WiFi causadas por:
 
 **Observação:** caso esteja vendo pelo VS Code, utilizar o atalho `Ctrl+Shift+V` para melhor visualização.
 
-<img src="./docs/graph.gif" alt="CSI Realtime Monitor" width="80%"/>
+<img src="./docs/funcionando.png" alt="CSI Realtime Monitor" width="80%"/>
 
 ## 📋 Índice
 - [Funcionamento](#funcionamento)
@@ -28,6 +28,8 @@ O ESP32 conecta em uma rede WiFi e ativa o modo CSI do chip WiFi da Espressif. A
 3. **Suavização exponencial**: Aplica filtro EMA (α=0.1) para reduzir ruído
 4. **Detecção de movimento**: Calcula delta entre leituras consecutivas (threshold: 0.4)
 5. **Visualização**: Envia CSI, RSSI, delta e detecção de movimento para Serial Plotter
+
+<img src="./docs/graph.gif" alt="CSI Realtime Monitor" width="80%"/>
 
 ## 🛠️ Hardware Necessário
 - **Placa**: ESP32-WROOM-32
