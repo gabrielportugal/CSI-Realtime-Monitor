@@ -1,0 +1,52 @@
+# Pasta de treinamento (datasets e modelos)
+train/
+v1_esp32_csi_ml/python/train/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+*.pyo
+
+# Ambientes virtuais
+venv/
+env/
+ENV/
+.venv/
+
+# Modelos treinados
+*.pkl
+*.h5
+*.model
+
+# Datasets
+*.csv
+*.dat
+*.txt
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema Operacional
+.DS_Store
+Thumbs.db
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp

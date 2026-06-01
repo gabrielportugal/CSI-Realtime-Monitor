@@ -1,165 +1,73 @@
-# CSI Realtime Monitor
-Projeto utilizando o ESP32 para capturar informações de CSI (Channel State Information) do WiFi e visualizar alterações do ambiente em tempo real através do Arduino Serial Plotter.
+# CSI ESP32 - Deteccao de Movimento com Wi-Fi
 
-O sistema detecta pequenas mudanças no sinal WiFi causadas por:
-- movimento de pessoas
-- presença no ambiente
-- alterações físicas próximas ao roteador
-- mudanças de propagação do sinal
+![Status](https://img.shields.io/badge/status-active-success.svg)
+![Platform](https://img.shields.io/badge/platform-ESP32-blue.svg)
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 
-**Observação:** caso esteja vendo pelo VS Code, utilizar o atalho `Ctrl+Shift+V` para melhor visualização.
+## 🎯 Sobre o Projeto
 
-<img src="./docs/funcionando.png" alt="CSI Realtime Monitor" width="80%"/>
+Este projeto explora o uso do **ESP32** para capturar dados CSI do Wi-Fi e aplicar tecnicas de **Machine Learning** para detectar movimentos no ambiente. O sistema funciona sem necessidade de cameras ou sensores de presenca tradicionais, utilizando apenas as variacoes no sinal Wi-Fi.
 
-## 📋 Índice
-- [Funcionamento](#funcionamento)
-- [Hardware Necessário](#hardware-necessário)
-- [Instalação e Configuração](#instalação-e-configuração)
-- [Como Usar](#como-usar)
-- [Parâmetros Monitorados](#parâmetros-monitorados)
-- [Configurações CSI](#configurações-csi)
-- [Aplicações](#aplicações)
-- [Possíveis Melhorias](#possíveis-melhorias)
+## 📡 O que e CSI (Channel State Information)?
 
-## 🔧 Funcionamento
-O ESP32 conecta em uma rede WiFi e ativa o modo CSI do chip WiFi da Espressif. A cada pacote WiFi recebido:
-1. **Captura CSI**: Obtém dados brutos das subportadoras WiFi
-2. **Calcula energia**: Soma absoluta dos valores das subportadoras dividido pelo tamanho do buffer
-3. **Suavização exponencial**: Aplica filtro EMA (α=0.1) para reduzir ruído
-4. **Detecção de movimento**: Calcula delta entre leituras consecutivas (threshold: 0.4)
-5. **Visualização**: Envia CSI, RSSI, delta e detecção de movimento para Serial Plotter
+CSI (Channel State Information) e uma tecnologia que permite capturar informacoes detalhadas sobre o estado do canal de comunicacao Wi-Fi. Diferente do RSSI (Received Signal Strength Indicator), que fornece apenas a intensidade do sinal, o CSI captura:
 
-<img src="./docs/graph.gif" alt="CSI Realtime Monitor" width="80%"/>
+- **Amplitude e fase** de cada subportadora do sinal Wi-Fi
+- **Informacoes sobre multiplos caminhos** (multipath) do sinal
+- **Variacoes sutis** causadas por movimentos no ambiente
 
-## 🛠️ Hardware Necessário
-- **Placa**: ESP32-WROOM-32
-- **IDE**: Arduino IDE 1.8.x ou superior
-- **Rede**: WiFi 2.4GHz (modo promíscuo ativado)
-- **Cabo**: USB para programação e comunicação serial
+Essas caracteristicas tornam o CSI ideal para aplicacoes de **deteccao de movimento sem contato**, **reconhecimento de gestos**, **monitoramento de atividades** e **sistemas de seguranca**.
 
-## 📚 Bibliotecas Utilizadas
-- `WiFi.h` - Conexão WiFi padrão
-- `esp_wifi.h` - Acesso às funcionalidades CSI da Espressif
+### Aplicacoes Praticas
 
-## ⚙️ Instalação e Configuração
+- 🏠 **Smart Home**: Deteccao de presenca e automacao residencial
+- 🔒 **Seguranca**: Sistemas de alarme e monitoramento de intrusos
+- 👴 **Saude**: Monitoramento de quedas e atividades de idosos
+- 🎮 **Interfaces**: Controle por gestos sem contato
+- 💡 **IoT**: Dispositivos inteligentes sensíveis ao contexto
 
-### 1. Preparar Arduino IDE
-- Instalar suporte para ESP32 via Board Manager
-- Selecionar placa: **ESP32 Dev Module**
-- Configurar porta serial correta
+## 📂 Estrutura do Projeto
 
-### 2. Configurar Credenciais WiFi
-Edite as seguintes linhas no arquivo `plotter.ino`:
+O projeto esta organizado em duas versoes principais:
 
-```cpp
-const char* ssid = "SUA_REDE_WIFI";      // Nome da sua rede WiFi
-const char* password = "SUA_SENHA";       // Senha da sua rede
-```
+### 📁 [v0_csi_realtime_monitor/](v0_csi_realtime_monitor/)
 
-### 3. Upload do Código
-- Conecte o ESP32 via USB
-- Clique em Upload na Arduino IDE
-- Aguarde a gravação completa
+**Versao Base - Monitor em Tempo Real**
 
-## 🚀 Como Usar
+- 🔹 Codigo Arduino basico para ESP32
+- 🔹 Captura e transmissao de dados CSI via serial
+- 🔹 Ideal para estudo inicial e entendimento do CSI
+- 🔹 Visualizacao em tempo real dos dados brutos
 
-### Abrindo o Serial Plotter
-1. Após o upload, vá em: **Tools → Serial Plotter**
-2. Configure Baud Rate para: **115200**
-3. Você verá os gráficos em tempo real
+**Quando usar:**
+- Para aprender como o CSI funciona
+- Para debug e analise de dados
+- Como base para experimentos personalizados
 
-### Testando a Detecção
-- Mova a mão próximo ao ESP32
-- Caminhe próximo ao roteador WiFi
-- Observe os picos no gráfico quando houver movimento
+**📖 [Documentacao completa da V1](v0_csi_realtime_monitor/README.md)**
 
-## 📊 Parâmetros Monitorados
+<img src="./docs/v0/funcionando.png" alt="Versão 0" width="60%"/>
 
-| Parâmetro | Descrição | Valores Típicos |
-|-----------|-----------|-----------------|
-| **CSI** | Energia média suavizada das subportadoras | Varia conforme ambiente |
-| **RSSI** | Indicador de força do sinal (dBm) | -30 a -90 dBm |
-| **ultimoCSI** | Último valor CSI registrado | Espelha CSI |
-| **delta** | Diferença absoluta entre leituras | 0 = sem mudança |
-| **MOV** | Detecção de movimento | 0 = sem movimento<br>100 = movimento detectado |
+### 📁 [v1_esp32_csi_ml/](v1_esp32_csi_ml/)
 
-### Threshold de Movimento
-O código detecta movimento quando `delta > 0.4`. Este valor pode ser ajustado na linha:
+**Versao 1 - Machine Learning**
 
-```cpp
-if (delta > 0.4)  // Ajuste este valor conforme necessário
-```
+- 🔹 Sistema completo com pipeline de ML
+- 🔹 Extracao automatica de features
+- 🔹 Algoritmo Random Forest para classificacao
+- 🔹 Deteccao de movimento em tempo real
+- 🔹 Scripts Python para coleta, treinamento e predicao
 
-## 🔬 Configurações CSI
+**Quando usar:**
+- Para aplicacoes praticas de deteccao de movimento
+- Para sistemas de producao
+- Para expandir com novos classificadores
 
-O projeto utiliza as seguintes configurações CSI:
+**📖 [Documentacao completa da V1](v1_esp32_csi_ml/README.md)**
 
-```cpp
-wifi_csi_config_t csi_config = {
-    .lltf_en = true,           // Legacy Long Training Field
-    .htltf_en = true,          // HT Long Training Field  
-    .stbc_htltf2_en = true,    // STBC HT-LTF2
-    .ltf_merge_en = true,      // Merge LTF data
-    .channel_filter_en = true, // Filtro de canal
-    .manu_scale = false,       // Escala manual desativada
-    .shift = false             // Shift desativado
-};
-```
+<img src="./docs/v1/predict.png" alt="Versão 1" width="60%"/>
 
-## 💡 Aplicações
-
-- **Detecção de presença** - Sistemas de segurança sem câmera
-- **Monitoramento indoor** - Análise de ocupação de ambientes
-- **Sensing sem câmera** - Privacidade preservada
-- **Análise de propagação WiFi** - Estudos de RF
-- **Pesquisa em CSI** - Trabalhos acadêmicos
-- **Computação ubíqua** - IoT e ambientes inteligentes
-- **Sistemas de percepção ambiental** - Smart homes
-
-## 🚀 Possíveis Melhorias
-
-### Processamento de Sinal
-- **FFT do CSI** - Análise de frequência para padrões complexos
-- **Filtros avançados** - Kalman, Butterworth, adaptativo
-- **Múltiplas antenas** - Usar diversidade espacial
-
-### Inteligência Artificial
-- **Classificação por IA** - Machine Learning para reconhecer padrões
-- **Detecção de gestos** - Reconhecer movimentos específicos
-- **Detecção respiratória** - Monitoramento de saúde
-
-### Armazenamento e Visualização
-- **Dashboard web** - Interface em tempo real via WebSocket
-- **Armazenamento dos dados** - Logging em SD card ou nuvem
-- **Gráficos 3D** - Visualização espacial do CSI
-
-### Otimizações
-- **Ajuste dinâmico de threshold** - Adaptação ao ambiente
-- **Modo sleep** - Economia de energia entre medições
-- **MQTT** - Integração com sistemas IoT
-
-## ⚠️ Avisos Importantes
-
-- **Modo Promíscuo**: O código ativa modo promíscuo WiFi, que pode não ser legal em todos os países. Verifique a legislação local.
-- **Segurança**: As credenciais WiFi estão hardcoded. Para produção, use métodos mais seguros.
-- **Performance**: O CSI gera muitos dados. Valores de delay podem precisar ajuste conforme o ambiente.
-
-## 🐛 Troubleshooting
-
-**Problema**: Serial Plotter não exibe gráficos
-- Verifique se o Baud Rate está em 115200
-- Confirme que o ESP32 está conectado
-- Reinicie o ESP32 após abrir o Serial Plotter
-
-**Problema**: Não detecta movimento
-- Ajuste o threshold (valor 0.4) para maior ou menor sensibilidade
-- Verifique se está próximo ao roteador WiFi
-- Certifique-se de que está na rede WiFi 2.4GHz
-
-**Problema**: Gráfico muito ruidoso
-- Aumente o fator de suavização (de 0.9 para 0.95)
-- Aumente o delay no loop de 50ms para 100ms
-
+---
 ## 👤 Autor
 
 **Gabriel Portugal**  
@@ -168,7 +76,3 @@ wifi_csi_config_t csi_config = {
 
 ## 📝 Licença
 Projeto livre para estudos, pesquisas e experimentação com WiFi CSI e ESP32.
-
----
-
-**Última atualização**: Maio 2026
